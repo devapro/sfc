@@ -1,0 +1,78 @@
+.disconnect-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.2rem;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  margin-bottom: 0;
+}
+.disconnect-btn:hover {
+  background: #c0392b;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 400px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 32px 24px 24px 24px;
+}
+.status {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.status.not-connected { color: #888; }
+.status.connecting { color: #e6a700; }
+.status.connected { color: #2ecc40; }
+.notifications {
+  min-height: 24px;
+  margin-bottom: 16px;
+  color: #d8000c;
+}
+.peers-list {
+  margin-bottom: 16px;
+}
+.peers-list ul {
+  padding-left: 20px;
+  margin: 0;
+}
+.peers-list li {
+  margin-bottom: 4px;
+}
+.room-input {
+  display: flex;
+  margin-bottom: 20px;
+}
+.room-input input {
+  flex: 1;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.connect-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.2rem;
+  background: #2ecc40;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.connect-btn:hover {
+  background: #27ae38;
+}
