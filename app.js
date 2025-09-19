@@ -1,7 +1,7 @@
 
-import React, { useState } from 'https://esm.sh/react@18.2.0';
-import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
-import { joinRoom } from 'https://esm.sh/trystero';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom/client';
+import { joinRoom } from 'trystero';
 
 function App() {
   const [status, setStatus] = useState('not connected'); // 'not connected' | 'connecting' | 'connected'
