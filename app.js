@@ -73,6 +73,12 @@ function App() {
     setRoom(e.target.value);
   }
 
+  function handleRoomKeyDown(e) {
+    if (e.key === 'Enter') {
+      initCall();
+    }
+  }
+
   let statusClass = 'status ' + status.replace(' ', '-');
 
   return (
@@ -92,7 +98,8 @@ function App() {
                 type: 'text',
                 placeholder: 'Enter room name...',
                 value: room,
-                onChange: handleRoomChange
+                onChange: handleRoomChange,
+                onKeyDown: handleRoomKeyDown
               })
             ),
             React.createElement('button', {
