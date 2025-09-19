@@ -1,3 +1,15 @@
+/* Dot indicators for talking status */
+.dot-indicator {
+  margin-left: 8px;
+  vertical-align: middle;
+  box-shadow: 0 0 2px #bbb;
+}
+.user-dot {
+  border: 1.5px solid #e74c3c;
+}
+.peer-dot {
+  border: 1.5px solid #2ecc40;
+}
 .disconnect-btn {
   width: 100%;
   padding: 16px;
