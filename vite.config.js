@@ -8,6 +8,10 @@ export default defineConfig({
                 {
                     src: 'index.html',
                     dest: 'dist'
+                },
+                {
+                    src: 'style.css',
+                    dest: 'dist'
                 }
             ]
         })

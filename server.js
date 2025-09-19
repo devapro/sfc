@@ -15,17 +15,8 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files
-app.use(express.static(path.join(__dirname)));
-
-// Serve index.html only for requests that do not look like file requests
-app.get('*', (req, res, next) => {
-  if (req.path.includes('.') || req.path.startsWith('/bundle.js')) {
-    // If the request is for a file (has a dot), skip to static middleware
-    return next();
-  }
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+// Serve static files from the 'dist' directory
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // HTTPS options
 const httpsOptions = {
