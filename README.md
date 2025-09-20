@@ -1,6 +1,15 @@
 # SFC (Serverless Free Calls)
 
+![SFC Screenshot](https://github.com/devapro/sfc/raw/main/image.png)
+
 SFC enables users to make calls without registration or a dedicated backend server. The project leverages modern web technologies to provide seamless, peer-to-peer communication directly from the browser.
+
+## How to use
+
+- Open https://devapro.github.io/sfc/
+- Enter your room name
+- Click copy Room URL
+- Share with your friends
 
 ## Features
 
