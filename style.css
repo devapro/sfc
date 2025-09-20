@@ -1,5 +1,32 @@
+/* Microphone button styles */
+.mic-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.2rem;
+  background: #8e44ad;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s;
+}
+.mic-btn.mic-off {
+  background: #e74c3c;
+}
+.mic-btn:hover {
+  background: #6c3483;
+}
+.mic-btn.mic-off:hover {
+  background: #c0392b;
+}
 /* No peers message style */
-.no-peers {
+.info-text {
   font-style: italic;
   font-weight: 400;
   color: #888;
