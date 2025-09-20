@@ -3,25 +3,25 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { joinRoom } from 'trystero';
 
+const params = new URLSearchParams(window.location.search);
+const roomName = params.get('room');
+
 function App() {
-  // Auto-connect if ?room= is present in URL
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const roomParam = params.get('room');
-    if (roomParam && roomParam.trim() !== '') {
-      setRoom(roomParam);
-      setTimeout(() => { initCall(); }, 0);
-    }
-    // eslint-disable-next-line
-  }, []);
   const [status, setStatus] = useState('not connected'); // 'not connected' | 'connecting' | 'connected'
   const [notification, setNotification] = useState('');
   const [peers, setPeers] = useState([]);
-  const [room, setRoom] = useState('');
+  const [room, setRoom] = useState(roomName || '');
   const roomInstanceRef = React.useRef(null);
   const selfStreamRef = React.useRef(null);
   const [micEnabled, setMicEnabled] = useState(true);
   const prevSpaceKeyPressedRef = React.useRef(false);
+  // Auto-connect if ?room= is present in URL
+  React.useEffect(() => {
+    if (roomName && roomName.trim() !== '') {
+      setTimeout(() => { initCall(); }, 100);
+    }
+    // eslint-disable-next-line
+  }, []);
   // Handle spacebar press/release for mic toggle
   React.useEffect(() => {
 
@@ -58,9 +58,10 @@ function App() {
 
     let roomName = room;
     if (!roomName || roomName.trim() === '') {
-        roomName = 'default-room';
-        setRoom(_ => roomName);
+      roomName = 'default-room';
+      setRoom(_ => roomName);
     }
+    roomName = roomName.trim();
     // Set query parameter for room
     if (window && window.history && window.location) {
       const url = new URL(window.location.href);
@@ -177,7 +178,8 @@ function App() {
             React.createElement('button', {
               className: 'connect-btn',
               onClick: initCall,
-              key: 'connect-btn'
+              key: 'connect-btn',
+              disabled: status === 'connecting'
             },
               React.createElement('span', { className: 'material-icons', style: { verticalAlign: 'middle', marginRight: 8 } }, 'call'),
               'Connect'

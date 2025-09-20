@@ -110,3 +110,10 @@ body {
 .connect-btn:hover {
   background: #27ae38;
 }
+
+.connect-btn:disabled {
+  background: #bbb !important;
+  color: #fff !important;
+  cursor: not-allowed !important;
+  opacity: 1;
+}
