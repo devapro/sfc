@@ -22,7 +22,7 @@ More details of peer-to-peer implementation can be found [here](https://github.c
     ```
 3. Start the development server:
     ```bash
-    npm start
+    npm run start
     ```
 4. Create sel signed certificates for local network:
     ```bash

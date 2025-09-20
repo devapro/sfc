@@ -158,7 +158,7 @@ function App() {
       React.createElement('div', { className: 'peers-list' },
         status === 'connected' ? React.createElement('div', null, 'Connected peers:') : null,
         peers.length === 0 && status === 'connected'
-          ? React.createElement('div', { className: 'no-peers' }, 'No peers connected')
+          ? React.createElement('div', { className: 'info-text' }, 'No peers connected')
           : React.createElement('ul', null,
               peers.map((peer, i) => React.createElement('li', { key: i }, peer))
             )
@@ -178,17 +178,38 @@ function App() {
               className: 'connect-btn',
               onClick: initCall,
               key: 'connect-btn'
-            }, 'Connect')
+            },
+              React.createElement('span', { className: 'material-icons', style: { verticalAlign: 'middle', marginRight: 8 } }, 'call'),
+              'Connect'
+            )
           ]
         : [
-            React.createElement('div', { className: 'room-name', key: 'room-name', style: { marginBottom: 20, fontWeight: 'bold', fontSize: '1.1rem' } },
-              'Room: ' + (room || '(unnamed)')
+            React.createElement('div', { className: 'room-name', key: 'room-name', style: { marginBottom: 2, fontWeight: 'bold', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 8 } },
+              'Room: ',
+              React.createElement('a', {
+                href: `?room=${encodeURIComponent(room)}`,
+                style: { color: '#8e44ad', textDecoration: 'underline', marginLeft: 6, marginRight: 6, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 },
+                onClick: e => {
+                  e.preventDefault();
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('room', room);
+                  navigator.clipboard.writeText(url.toString());
+                },
+                title: 'Copy room link to clipboard'
+              },
+                room || '(unnamed)',
+                React.createElement('span', { className: 'material-icons', style: { fontSize: '1.1em', marginLeft: 4 } }, 'content_copy')
+              )
             ),
+            React.createElement('div', { className: 'info-text', style: { marginBottom: 20 } }, 'Copy link above to invite others'),
             React.createElement('button', {
               className: 'disconnect-btn',
               onClick: disconnect,
               key: 'disconnect-btn'
-            }, 'Disconnect'),
+            },
+              React.createElement('span', { className: 'material-icons', style: { verticalAlign: 'middle', marginRight: 8 } }, 'call_end'),
+              'Disconnect'
+            ),
             React.createElement('button', {
               className: `mic-btn${micEnabled ? '' : ' mic-off'}`,
               onClick: e => {
@@ -198,9 +219,10 @@ function App() {
               key: 'mic-btn',
               title: micEnabled ? 'Microphone is ON' : 'Microphone is OFF'
             },
+              React.createElement('span', { className: 'material-icons', style: { verticalAlign: 'middle', marginRight: 8 } }, micEnabled ? 'mic' : 'mic_off'),
               micEnabled ? 'Microphone is ON' : 'Microphone is OFF'
             ),
-            !micEnabled && !prevSpaceKeyPressedRef.current ? React.createElement('div', { className: 'no-peers' }, 'Press and hold SPACE to talk') : null
+            !micEnabled && !prevSpaceKeyPressedRef.current ? React.createElement('div', { className: 'info-text' }, 'Press and hold SPACE to talk') : null
           ]
     )
   );
