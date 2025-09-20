@@ -4,6 +4,16 @@ import ReactDOM from 'react-dom/client';
 import { joinRoom } from 'trystero';
 
 function App() {
+  // Auto-connect if ?room= is present in URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const roomParam = params.get('room');
+    if (roomParam && roomParam.trim() !== '') {
+      setRoom(roomParam);
+      setTimeout(() => { initCall(); }, 0);
+    }
+    // eslint-disable-next-line
+  }, []);
   const [status, setStatus] = useState('not connected'); // 'not connected' | 'connecting' | 'connected'
   const [notification, setNotification] = useState('');
   const [peers, setPeers] = useState([]);
@@ -50,6 +60,12 @@ function App() {
     if (!roomName || roomName.trim() === '') {
         roomName = 'default-room';
         setRoom(_ => roomName);
+    }
+    // Set query parameter for room
+    if (window && window.history && window.location) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('room', roomName);
+      window.history.replaceState({}, '', url);
     }
     const config = { appId: 'sfc-app-id' };
     const roomInstance = joinRoom(config, roomName);
