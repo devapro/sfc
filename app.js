@@ -58,7 +58,7 @@ function App() {
 
     let roomName = room;
     if (!roomName || roomName.trim() === '') {
-      roomName = 'default-room';
+      roomName = 'room-' + Math.random().toString(36).slice(2, 10);
       setRoom(_ => roomName);
     }
     roomName = roomName.trim();
