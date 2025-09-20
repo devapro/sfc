@@ -15,8 +15,13 @@ function App() {
     setNotification('Connecting...');
     setStatus('connecting');
 
+    let roomName = room;
+    if (!roomName || roomName.trim() === '') {
+        roomName = 'default-room';
+        setRoom(_ => roomName);
+    }
     const config = { appId: 'sfc-app-id' };
-    const roomInstance = joinRoom(config, room || 'default-room');
+    const roomInstance = joinRoom(config, roomName);
     roomInstanceRef.current = roomInstance;
     
     ////////
@@ -87,9 +92,11 @@ function App() {
       React.createElement('div', { className: 'notifications' }, notification),
       React.createElement('div', { className: 'peers-list' },
         React.createElement('div', null, 'Connected peers:'),
-        React.createElement('ul', null,
-          peers.map((peer, i) => React.createElement('li', { key: i }, peer))
-        )
+        peers.length === 0
+          ? React.createElement('div', { className: 'no-peers' }, 'No peers connected')
+          : React.createElement('ul', null,
+              peers.map((peer, i) => React.createElement('li', { key: i }, peer))
+            )
       ),
       status !== 'connected'
         ? [
