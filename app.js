@@ -9,6 +9,37 @@ function App() {
   const [peers, setPeers] = useState([]);
   const [room, setRoom] = useState('');
   const roomInstanceRef = React.useRef(null);
+  const selfStreamRef = React.useRef(null);
+  const [micEnabled, setMicEnabled] = useState(true);
+  const prevSpaceKeyPressedRef = React.useRef(false);
+  // Handle spacebar press/release for mic toggle
+  React.useEffect(() => {
+
+    function handleKeyDown(e) {
+      if (e.code === 'Space' && status === 'connected') {
+        if (selfStreamRef.current && prevSpaceKeyPressedRef.current === false) {
+            console.log('space down');
+            prevSpaceKeyPressedRef.current = true;
+            toggleMic();
+        }
+      }
+    }
+    function handleKeyUp(e) {
+      if (e.code === 'Space' && status === 'connected') {
+        if (selfStreamRef.current && prevSpaceKeyPressedRef.current === true) {
+            console.log('space up');
+            prevSpaceKeyPressedRef.current = false;
+            toggleMic();
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [status]);
 
   // Dummy initCall method
   async function initCall() {
@@ -33,6 +64,8 @@ function App() {
       audio: true,
       video: false
     });
+    selfStreamRef.current = selfStream;
+    setMicEnabled(true);
 
     // send stream to peers currently in the room
     roomInstance.addStream(selfStream);
@@ -71,7 +104,23 @@ function App() {
     setStatus('not connected');
     setNotification('Disconnected');
     setPeers([]);
+    setMicEnabled(true);
+    if (selfStreamRef.current) {
+      selfStreamRef.current.getTracks().forEach(track => track.stop());
+      selfStreamRef.current = null;
+    }
     setTimeout(() => setNotification(''), 2000);
+  }
+
+  function toggleMic() {
+    if (!selfStreamRef.current) return;
+    const audioTracks = selfStreamRef.current.getAudioTracks();
+    if (audioTracks.length > 0) {
+      const enabled = !audioTracks[0].enabled;
+      audioTracks[0].enabled = enabled;
+      setMicEnabled(enabled);
+      console.log('mic enabled:', enabled);
+    }
   }
 
   function handleRoomChange(e) {
@@ -91,8 +140,8 @@ function App() {
       React.createElement('div', { className: statusClass }, 'Connection status: ' + status),
       React.createElement('div', { className: 'notifications' }, notification),
       React.createElement('div', { className: 'peers-list' },
-        React.createElement('div', null, 'Connected peers:'),
-        peers.length === 0
+        status === 'connected' ? React.createElement('div', null, 'Connected peers:') : null,
+        peers.length === 0 && status === 'connected'
           ? React.createElement('div', { className: 'no-peers' }, 'No peers connected')
           : React.createElement('ul', null,
               peers.map((peer, i) => React.createElement('li', { key: i }, peer))
@@ -123,7 +172,19 @@ function App() {
               className: 'disconnect-btn',
               onClick: disconnect,
               key: 'disconnect-btn'
-            }, 'Disconnect')
+            }, 'Disconnect'),
+            React.createElement('button', {
+              className: `mic-btn${micEnabled ? '' : ' mic-off'}`,
+              onClick: e => {
+                toggleMic();
+                if (e && e.target && typeof e.target.blur === 'function') e.target.blur();
+              },
+              key: 'mic-btn',
+              title: micEnabled ? 'Microphone is ON' : 'Microphone is OFF'
+            },
+              micEnabled ? 'Microphone is ON' : 'Microphone is OFF'
+            ),
+            !micEnabled && !prevSpaceKeyPressedRef.current ? React.createElement('div', { className: 'no-peers' }, 'Press and hold SPACE to talk') : null
           ]
     )
   );
