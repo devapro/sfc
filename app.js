@@ -1,7 +1,10 @@
 
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { joinRoom } from 'trystero';
+import { joinRoom as joinRoomNostr } from 'trystero/nostr';
+import { joinRoom as joinRoomTorrent } from 'trystero/torrent';
+import { joinRoom as joinRoomIPFS } from 'trystero/ipfs';
+import { joinRoom as joinRoomMQTT } from 'trystero/mqtt';
 
 function App() {
   const [status, setStatus] = useState('not connected'); // 'not connected' | 'connecting' | 'connected'
@@ -10,13 +13,70 @@ function App() {
   const [room, setRoom] = useState('');
   const roomInstanceRef = React.useRef(null);
 
+  async function connectWithStrategy(strategy, roomName) {
+  try {
+    let joinRoom;
+    switch (strategy) {
+      case 'nostr':
+        joinRoom = joinRoomNostr;
+        break;
+      case 'torrent':
+        joinRoom = joinRoomTorrent;
+        break;
+      case 'ipfs':
+        joinRoom = joinRoomIPFS;
+        break;
+      case 'mqtt':
+        joinRoom = joinRoomMQTT;
+        break;
+      default:
+        throw new Error(`Unknown strategy: ${strategy}`);
+    }
+    const config = { appId: 'sfc-app-id' };
+    console.log(`Attempting connection with ${strategy} strategy...`);
+    const room = await Promise.race([
+      joinRoom(config, roomName),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000)),
+    ]);
+    console.log(`${strategy} connection successfully established`);
+    return { success: true, room, strategy };
+  } catch (error) {
+    setNotification(`${strategy} connection failed: ${error.message}`);
+    console.warn(`${strategy} connection failed: ${error.message}`);
+    return { success: false, error };
+  }
+}
+
   // Dummy initCall method
   async function initCall() {
     setNotification('Connecting...');
     setStatus('connecting');
 
-    const config = { appId: 'sfc-app-id' };
-    const roomInstance = joinRoom(config, room || 'default-room');
+    const strategies = ['nostr', 'torrent', 'ipfs', 'mqtt'];
+    const roomName = room || 'default-room';
+    
+    let roomInstance;
+    for (const strategy of strategies) {
+        const result = await connectWithStrategy(strategy, roomName);
+        if (result.success) {
+            roomInstance = result.room;
+            break;
+        }
+    }
+    
+    if (!roomInstance) {
+        setNotification('All connection strategies failed');
+        setStatus('not connected');
+        return;
+    }
+    // const roomInstance = joinRoom(
+    //     config,
+    //     room || 'default-room',
+    //     (error) => {
+    //         console.log(error)
+    //         setNotification('Connection failed');
+    //     }
+    // );
     roomInstanceRef.current = roomInstance;
     
     ////////
@@ -87,9 +147,11 @@ function App() {
       React.createElement('div', { className: 'notifications' }, notification),
       React.createElement('div', { className: 'peers-list' },
         React.createElement('div', null, 'Connected peers:'),
-        React.createElement('ul', null,
-          peers.map((peer, i) => React.createElement('li', { key: i }, peer))
-        )
+        peers.length === 0
+          ? React.createElement('div', { className: 'no-peers', style: { color: '#888', fontStyle: 'italic', marginTop: 4, marginBottom: 4 } }, 'No peers connected')
+          : React.createElement('ul', null,
+              peers.map((peer, i) => React.createElement('li', { key: i }, peer))
+            )
       ),
       status !== 'connected'
         ? [
